@@ -1,8 +1,8 @@
 # Take-Notes
 
-### Serverless Notes-taking React application, works on the browser's local storage.
+#### Serverless Notes-taking React application, works on the browser's local storage.
 
-### Live demo:&nbsp;  https://takenotelocal.herokuapp.com/
+#### Live demo:&nbsp;  https://takenotelocal.herokuapp.com/
 
 
 ### Features
