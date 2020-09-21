@@ -3,21 +3,34 @@ import { useState, useRef, useEffect } from 'react'
 import ListView from './component/ListView'
 import './App.css'
 import moment from 'moment'
+import Blowfish from 'egoroof-blowfish'
 
 export default function TakeNotes() {
 
-    var [headingVal, setHeadingVal] = useState('PeopleBox\'s Take Notes');
+    var [headingVal, setHeadingVal] = useState('Take Notes');
     var [select, setselect] = useState('-1');
-    const [list, setList] = useState([]);
+    const [list, setList] = useState([{}]);
     const [tempList, setTempList] = useState([]);
     const STORAGE_KEY = "PeopleBOx.ai";
     const AddTextField = useRef();
     var ContentTextField = useRef();
     var SearchTextField = useRef();
-    // localStorage.setItem(STORAGE_KEY,null);
+    const NodeRSA = require('node-rsa');
+    const key = new NodeRSA({ b: 512 });
+
+
+    const bf = new Blowfish('super key');
+
+
+    // const key = new NodeRSA({key: 'mysecret'},{format: String},{ b: 512 });
+
+    // localStorage.setItem(STORAGE_KEY, null);
 
     useEffect(() => {
         const storage = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+        // storage = decrypted;
+
         if (storage) {
             setList(storage)
         }
@@ -27,6 +40,25 @@ export default function TakeNotes() {
     }, [])
 
     useEffect(() => {
+        let time = new Date();
+        console.log("Timer started: :" + time)
+        console.log(key)
+        const encrypted = key.encrypt(list, 'base64');
+        console.log('encrypted: ', encrypted);
+        const decrypted = key.decrypt(encrypted, 'utf8');
+        console.log('decrypted: ', JSON.parse(decrypted));
+        let time2 = new Date()
+        console.log('time:' + (time2 - time))
+
+
+        let ntime = new Date();
+        const encoded_bf = bf.encode(JSON.stringify(list));
+        const decoded_bf = bf.decode(encoded_bf, Blowfish.TYPE.STRING);
+        console.log('Encrypted in Blowfish\n', encoded_bf)
+        console.log('Decrypted by Blowfish\n', decoded_bf);
+        let ntime2 = new Date()
+        console.log('time:' + (ntime2 - ntime))
+
         localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     }, [list])
 
